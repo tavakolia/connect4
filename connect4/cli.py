@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import logging
 
 from connect4.game import Game
@@ -8,12 +9,27 @@ from connect4.players.minimax import MinimaxPlayer
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.WARNING)
-    red = HumanPlayer()
-    yellow = MinimaxPlayer()
-    game = Game(red=red, yellow=yellow)
+    parser = argparse.ArgumentParser(description="Play Connect 4 against a bot")
+    parser.add_argument(
+        "--play-as", choices=["red", "yellow"], default="red",
+        help="Which color to play as (default: red, moves first)",
+    )
+    parser.add_argument(
+        "--depth", type=int, default=6,
+        help="Bot search depth (default: 6)",
+    )
+    args = parser.parse_args()
 
-    print("Connect 4 — You are RED, bot is YELLOW")
+    logging.basicConfig(level=logging.WARNING)
+    human = HumanPlayer()
+    bot = MinimaxPlayer(depth=args.depth)
+
+    if args.play_as == "red":
+        game = Game(red=human, yellow=bot)
+    else:
+        game = Game(red=bot, yellow=human)
+
+    print(f"Connect 4 — You are {args.play_as.upper()}, bot is {('YELLOW' if args.play_as == 'red' else 'RED')}")
     print(game.board)
 
     for state in game.play():
