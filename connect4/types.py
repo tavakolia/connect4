@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import enum
 import dataclasses
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from connect4.board import Board
 
 
 class Piece(enum.Enum):
@@ -28,7 +32,7 @@ class MoveResult:
 
 @dataclasses.dataclass(frozen=True)
 class GameState:
-    board: object  # Board (avoid circular import)
+    board: Board
     piece: Piece
     column: int
     winner: Piece | None
