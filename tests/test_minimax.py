@@ -25,6 +25,36 @@ class TestForcedWin:
         assert result.column == 0
 
 
+    def test_takes_immediate_win_over_deep_win(self):
+        """When multiple columns lead to wins, bot must take the immediate one.
+
+        Regression: bot chose col 2 (forced win in several moves) over
+        col 4 (immediate win) because both scored +inf and col 2 was
+        explored first in center-out order.
+        """
+        board = Board()
+        # Row 0: R R R Y R . .
+        board.drop(0, Piece.RED)
+        board.drop(1, Piece.RED)
+        board.drop(2, Piece.RED)
+        board.drop(3, Piece.YELLOW)
+        board.drop(4, Piece.RED)
+        # Row 1: R Y Y Y . . .
+        board.drop(0, Piece.RED)
+        board.drop(1, Piece.YELLOW)
+        board.drop(2, Piece.YELLOW)
+        board.drop(3, Piece.YELLOW)
+        # Row 2: . . . Y . . .
+        board.drop(3, Piece.YELLOW)
+        # Row 3: . . . R . . .
+        board.drop(3, Piece.RED)
+
+        # Col 4 is an immediate win: row 1 becomes Y Y Y Y at cols 1-4
+        player = MinimaxPlayer(depth=6)
+        result = player.choose_column(board, Piece.YELLOW)
+        assert result.column == 4
+
+
 class TestForcedBlock:
     def test_blocks_opponent_win(self):
         """Opponent has 3 in a row at cols 0-2, bot must play col 3."""

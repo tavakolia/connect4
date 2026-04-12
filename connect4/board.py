@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from connect4.types import Piece
+from connect4.types import ANSI_RED, ANSI_RESET, ANSI_YELLOW, Piece
 
 
 class Board:
@@ -63,13 +63,29 @@ class Board:
                 return False
         return True
 
+    # Display characters
+    _FILLED = "●"   # U+25CF BLACK CIRCLE
+    _EMPTY = "○"    # U+25CB WHITE CIRCLE
+    _BOX_V = "│"    # U+2502 BOX DRAWINGS LIGHT VERTICAL
+    _BOX_BL = "└"   # U+2514 BOX DRAWINGS LIGHT UP AND RIGHT
+    _BOX_BR = "┘"   # U+2518 BOX DRAWINGS LIGHT UP AND LEFT
+    _BOX_H = "─"    # U+2500 BOX DRAWINGS LIGHT HORIZONTAL
+
+    _DISPLAY = {
+        Piece.RED: f"{ANSI_RED}{_FILLED}{ANSI_RESET}",
+        Piece.YELLOW: f"{ANSI_YELLOW}{_FILLED}{ANSI_RESET}",
+        None: _EMPTY,
+    }
+
     def __str__(self) -> str:
+        # Build an empty row to measure visible width (no ANSI escapes)
+        empty_inner = " " + "  ".join([self._EMPTY] * self.COLS) + " "
+        border = self._BOX_BL + self._BOX_H * len(empty_inner) + self._BOX_BR
+
         lines = []
         for row in range(self.ROWS - 1, -1, -1):
-            cells = []
-            for col in range(self.COLS):
-                piece = self._grid[row][col]
-                cells.append(piece.value if piece else ".")
-            lines.append("| " + "  ".join(cells) + " |")
-        lines.append("  " + "  ".join(str(i) for i in range(self.COLS)) + "  ")
+            cells = [self._DISPLAY[self._grid[row][col]] for col in range(self.COLS)]
+            lines.append(self._BOX_V + " " + "  ".join(cells) + " " + self._BOX_V)
+        lines.append(border)
+        lines.append("  " + "  ".join(str(i + 1) for i in range(self.COLS)) + "  ")
         return "\n".join(lines)
