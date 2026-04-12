@@ -85,6 +85,6 @@ class Board:
         for row in range(self.ROWS - 1, -1, -1):
             cells = [self._DISPLAY[self._grid[row][col]] for col in range(self.COLS)]
             lines.append(f"{self._BOX_V} " + "  ".join(cells) + f" {self._BOX_V}")
-        lines.append(self._BOX_BL + self._BOX_H * 22 + self._BOX_BR)
+        lines.append(self._BOX_BL + self._BOX_H * 23 + self._BOX_BR)
         lines.append("  " + "  ".join(str(i) for i in range(self.COLS)) + "  ")
         return "\n".join(lines)
