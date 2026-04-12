@@ -25,6 +25,7 @@ class TestBotVsRandom:
                     wins += 1
                     break
         win_rate = wins / games
+        print(f"\n  Minimax vs Random: {wins}/{games} wins ({win_rate:.0%})")
         assert win_rate > 0.95, f"Win rate {win_rate:.0%} is below 95%"
 
 
@@ -43,6 +44,7 @@ class TestBotVsGreedy:
                     wins += 1
                     break
         win_rate = wins / games
+        print(f"\n  Minimax vs Greedy: {wins}/{games} wins ({win_rate:.0%})")
         assert win_rate > 0.80, f"Win rate {win_rate:.0%} is below 80%"
 
 
