@@ -21,7 +21,7 @@ class Piece(enum.Enum):
 class MoveAnalysis:
     column: int
     score: float
-    depth_reached: int
+    max_depth: int
 
 
 @dataclasses.dataclass(frozen=True)

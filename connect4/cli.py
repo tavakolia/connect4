@@ -18,7 +18,7 @@ def main() -> None:
 
     for state in game.play():
         print(f"\n{state.piece.name} plays column {state.column}")
-        print(game.board)
+        print(state.board)
 
         if state.winner:
             print(f"\n{state.winner.name} wins!")

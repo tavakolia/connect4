@@ -8,11 +8,14 @@ from connect4.types import GameState, Piece
 
 
 class Game:
+    """Orchestrates a Connect 4 game between two players."""
+
     def __init__(self, red: Player, yellow: Player) -> None:
         self.board = Board()
         self.players = {Piece.RED: red, Piece.YELLOW: yellow}
 
     def play(self) -> Generator[GameState, None, None]:
+        """Yield a GameState after each move. Red goes first. Ends on win or draw."""
         current = Piece.RED
 
         while True:

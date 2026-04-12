@@ -24,7 +24,7 @@ def evaluate(board: Board, piece: Piece) -> float:
     center_col = Board.COLS // 2
     center_count = sum(
         1 for row in range(Board.ROWS)
-        if board._grid[row][center_col] == piece
+        if board.get(row, center_col) == piece
     )
     score += center_count * _SCORE_CENTER
 
@@ -49,30 +49,30 @@ def _score_window(window: list[Piece | None], piece: Piece, opponent: Piece) -> 
 
 def _score_all_windows(board: Board, piece: Piece, opponent: Piece) -> float:
     score = 0.0
-    grid = board._grid
+    get = board.get
 
     # Horizontal
     for row in range(Board.ROWS):
         for col in range(Board.COLS - 3):
-            window = [grid[row][col + i] for i in range(4)]
+            window = [get(row, col + i) for i in range(4)]
             score += _score_window(window, piece, opponent)
 
     # Vertical
     for row in range(Board.ROWS - 3):
         for col in range(Board.COLS):
-            window = [grid[row + i][col] for i in range(4)]
+            window = [get(row + i, col) for i in range(4)]
             score += _score_window(window, piece, opponent)
 
     # Diagonal NE
     for row in range(Board.ROWS - 3):
         for col in range(Board.COLS - 3):
-            window = [grid[row + i][col + i] for i in range(4)]
+            window = [get(row + i, col + i) for i in range(4)]
             score += _score_window(window, piece, opponent)
 
     # Diagonal NW
     for row in range(3, Board.ROWS):
         for col in range(Board.COLS - 3):
-            window = [grid[row - i][col + i] for i in range(4)]
+            window = [get(row - i, col + i) for i in range(4)]
             score += _score_window(window, piece, opponent)
 
     return score

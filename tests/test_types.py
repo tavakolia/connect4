@@ -21,7 +21,7 @@ class TestMoveResult:
         assert result.analysis is None
 
     def test_move_result_with_analysis(self):
-        analysis = [MoveAnalysis(column=3, score=10.0, depth_reached=6)]
+        analysis = [MoveAnalysis(column=3, score=10.0, max_depth=6)]
         result = MoveResult(column=3, analysis=analysis)
         assert result.analysis == analysis
 

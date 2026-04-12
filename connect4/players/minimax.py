@@ -45,7 +45,7 @@ class MinimaxPlayer:
                     child, piece, self.depth - 1, -math.inf, math.inf, False
                 )
 
-            analyses.append(MoveAnalysis(column=col, score=score, depth_reached=self.depth))
+            analyses.append(MoveAnalysis(column=col, score=score, max_depth=self.depth))
             logger.debug("Column %d: score=%.2f", col, score)
 
             if score > best_score:

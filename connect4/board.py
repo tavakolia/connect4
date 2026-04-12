@@ -23,6 +23,10 @@ class Board:
                 return row
         raise ValueError(f"Column {column} is full")
 
+    def get(self, row: int, col: int) -> Piece | None:
+        """Get the piece at the given position, or None if empty."""
+        return self._grid[row][col]
+
     def is_valid_column(self, column: int) -> bool:
         return 0 <= column < self.COLS and self._grid[self.ROWS - 1][column] is None
 
