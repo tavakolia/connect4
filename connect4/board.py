@@ -63,13 +63,28 @@ class Board:
                 return False
         return True
 
+    # Display characters
+    _FILLED = "●"   # U+25CF BLACK CIRCLE
+    _EMPTY = "○"    # U+25CB WHITE CIRCLE
+    _RED_ANSI = "\033[91m"
+    _YELLOW_ANSI = "\033[93m"
+    _RESET_ANSI = "\033[0m"
+    _BOX_V = "│"    # U+2502 BOX DRAWINGS LIGHT VERTICAL
+    _BOX_BL = "└"   # U+2514 BOX DRAWINGS LIGHT UP AND RIGHT
+    _BOX_BR = "┘"   # U+2518 BOX DRAWINGS LIGHT UP AND LEFT
+    _BOX_H = "─"    # U+2500 BOX DRAWINGS LIGHT HORIZONTAL
+
+    _DISPLAY = {
+        Piece.RED: f"{_RED_ANSI}{_FILLED}{_RESET_ANSI}",
+        Piece.YELLOW: f"{_YELLOW_ANSI}{_FILLED}{_RESET_ANSI}",
+        None: _EMPTY,
+    }
+
     def __str__(self) -> str:
         lines = []
         for row in range(self.ROWS - 1, -1, -1):
-            cells = []
-            for col in range(self.COLS):
-                piece = self._grid[row][col]
-                cells.append(piece.value if piece else ".")
-            lines.append("| " + "  ".join(cells) + " |")
+            cells = [self._DISPLAY[self._grid[row][col]] for col in range(self.COLS)]
+            lines.append(f"{self._BOX_V} " + "  ".join(cells) + f" {self._BOX_V}")
+        lines.append(self._BOX_BL + self._BOX_H * 22 + self._BOX_BR)
         lines.append("  " + "  ".join(str(i) for i in range(self.COLS)) + "  ")
         return "\n".join(lines)

@@ -171,4 +171,4 @@ class TestStr:
     def test_str_shows_pieces(self, board):
         board.drop(column=3, piece=Piece.RED)
         s = str(board)
-        assert "R" in s
+        assert "\u25cf" in s  # filled circle for placed piece

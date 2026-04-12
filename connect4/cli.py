@@ -6,6 +6,7 @@ import logging
 from connect4.game import Game
 from connect4.players.human import HumanPlayer
 from connect4.players.minimax import MinimaxPlayer
+from connect4.types import Piece
 
 
 def main() -> None:
@@ -29,15 +30,21 @@ def main() -> None:
     else:
         game = Game(red=bot, yellow=human)
 
-    print(f"Connect 4 — You are {args.play_as.upper()}, bot is {('YELLOW' if args.play_as == 'red' else 'RED')}")
+    _RED = "\033[91mRED\033[0m"
+    _YELLOW = "\033[93mYELLOW\033[0m"
+    _color = {Piece.RED: _RED, Piece.YELLOW: _YELLOW}
+
+    you = _color[Piece.RED if args.play_as == "red" else Piece.YELLOW]
+    them = _color[Piece.YELLOW if args.play_as == "red" else Piece.RED]
+    print(f"Connect 4 — You are {you}, bot is {them}")
     print(game.board)
 
     for state in game.play():
-        print(f"\n{state.piece.name} plays column {state.column}")
+        print(f"\n{_color[state.piece]} plays column {state.column}")
         print(state.board)
 
         if state.winner:
-            print(f"\n{state.winner.name} wins!")
+            print(f"\n{_color[state.winner]} wins!")
             break
         elif state.is_draw:
             print("\nIt's a draw!")
