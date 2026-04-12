@@ -81,10 +81,14 @@ class Board:
     }
 
     def __str__(self) -> str:
+        # Build an empty row to measure visible width (no ANSI escapes)
+        empty_inner = " " + "  ".join([self._EMPTY] * self.COLS) + " "
+        border = self._BOX_BL + self._BOX_H * len(empty_inner) + self._BOX_BR
+
         lines = []
         for row in range(self.ROWS - 1, -1, -1):
             cells = [self._DISPLAY[self._grid[row][col]] for col in range(self.COLS)]
-            lines.append(f"{self._BOX_V} " + "  ".join(cells) + f" {self._BOX_V}")
-        lines.append(self._BOX_BL + self._BOX_H * 23 + self._BOX_BR)
+            lines.append(self._BOX_V + " " + "  ".join(cells) + " " + self._BOX_V)
+        lines.append(border)
         lines.append("  " + "  ".join(str(i) for i in range(self.COLS)) + "  ")
         return "\n".join(lines)
