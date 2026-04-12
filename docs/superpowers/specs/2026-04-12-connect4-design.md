@@ -1,5 +1,35 @@
 # Connect 4 — Design Spec
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Project Structure](#project-structure)
+- [Design Decisions](#design-decisions)
+  - [D1: Bot Algorithm — Minimax with Alpha-Beta Pruning](#d1-bot-algorithm--minimax-with-alpha-beta-pruning)
+  - [D2: Player Interface — Protocol (Structural Typing)](#d2-player-interface--protocol-structural-typing)
+  - [D3: Game Flow — Generator Pattern](#d3-game-flow--generator-pattern)
+  - [D4: Board Representation — 2D List](#d4-board-representation--2d-list)
+  - [D5: Board Constants — Class Attributes (YAGNI)](#d5-board-constants--class-attributes-yagni)
+  - [D6: Naming — Player (Protocol) + Piece (Enum)](#d6-naming--player-protocol--piece-enum)
+  - [D7: Evaluation Function — Pure Function, Separate File](#d7-evaluation-function--pure-function-separate-file)
+  - [D8: Human Input — Dependency Injection](#d8-human-input--dependency-injection)
+  - [D9: Observability — Logging + Move Analysis](#d9-observability--logging--move-analysis)
+  - [D10: Move Ordering — Center-Out](#d10-move-ordering--center-out)
+  - [D11: Random and Greedy Players — Separate Files](#d11-random-and-greedy-players--separate-files)
+- [Core Types](#core-types)
+- [Board API](#board-api)
+- [Player Protocol](#player-protocol)
+- [Game Orchestrator](#game-orchestrator)
+- [Evaluation Function](#evaluation-function)
+- [Minimax Search](#minimax-search)
+- [CLI](#cli)
+- [Testing Strategy](#testing-strategy)
+- [Over-Engineering Traps](#over-engineering-traps)
+- [Public API Surface](#public-api-surface)
+- [Interview Discussion Points](#interview-discussion-points)
+
+---
+
 ## Overview
 
 A Python module that lets a user play Connect 4 against a bot in the terminal. The bot uses minimax with alpha-beta pruning and a heuristic evaluation function. The architecture cleanly separates game engine, player logic, and UI so that all interesting logic is importable and testable without I/O.
