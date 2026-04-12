@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import copy as copy_module
-
 from connect4.types import Piece
 
 
@@ -16,6 +14,7 @@ class Board:
         ]
 
     def drop(self, column: int, piece: Piece) -> int:
+        """Drop a piece into the given column. Returns the row it landed in."""
         if column < 0 or column >= self.COLS:
             raise ValueError(f"Invalid column: {column}. Must be 0-{self.COLS - 1}")
         for row in range(self.ROWS):
@@ -39,6 +38,7 @@ class Board:
         return new_board
 
     def has_winner(self, piece: Piece) -> bool:
+        """Check if the given piece has four in a row."""
         directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
         for row in range(self.ROWS):
             for col in range(self.COLS):
