@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from connect4.types import Piece
+from connect4.types import ANSI_RED, ANSI_RESET, ANSI_YELLOW, Piece
 
 
 class Board:
@@ -66,17 +66,14 @@ class Board:
     # Display characters
     _FILLED = "●"   # U+25CF BLACK CIRCLE
     _EMPTY = "○"    # U+25CB WHITE CIRCLE
-    _RED_ANSI = "\033[91m"
-    _YELLOW_ANSI = "\033[93m"
-    _RESET_ANSI = "\033[0m"
     _BOX_V = "│"    # U+2502 BOX DRAWINGS LIGHT VERTICAL
     _BOX_BL = "└"   # U+2514 BOX DRAWINGS LIGHT UP AND RIGHT
     _BOX_BR = "┘"   # U+2518 BOX DRAWINGS LIGHT UP AND LEFT
     _BOX_H = "─"    # U+2500 BOX DRAWINGS LIGHT HORIZONTAL
 
     _DISPLAY = {
-        Piece.RED: f"{_RED_ANSI}{_FILLED}{_RESET_ANSI}",
-        Piece.YELLOW: f"{_YELLOW_ANSI}{_FILLED}{_RESET_ANSI}",
+        Piece.RED: f"{ANSI_RED}{_FILLED}{ANSI_RESET}",
+        Piece.YELLOW: f"{ANSI_YELLOW}{_FILLED}{ANSI_RESET}",
         None: _EMPTY,
     }
 
@@ -90,5 +87,5 @@ class Board:
             cells = [self._DISPLAY[self._grid[row][col]] for col in range(self.COLS)]
             lines.append(self._BOX_V + " " + "  ".join(cells) + " " + self._BOX_V)
         lines.append(border)
-        lines.append("  " + "  ".join(str(i) for i in range(self.COLS)) + "  ")
+        lines.append("  " + "  ".join(str(i + 1) for i in range(self.COLS)) + "  ")
         return "\n".join(lines)

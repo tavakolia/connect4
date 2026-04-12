@@ -165,8 +165,8 @@ class TestHasWinner:
 class TestStr:
     def test_str_empty_board(self, board):
         s = str(board)
-        assert "0" in s
-        assert "6" in s
+        assert "1" in s
+        assert "7" in s
 
     def test_str_shows_pieces(self, board):
         board.drop(column=3, piece=Piece.RED)

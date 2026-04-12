@@ -30,21 +30,17 @@ def main() -> None:
     else:
         game = Game(red=bot, yellow=human)
 
-    _RED = "\033[91mRED\033[0m"
-    _YELLOW = "\033[93mYELLOW\033[0m"
-    _color = {Piece.RED: _RED, Piece.YELLOW: _YELLOW}
-
-    you = _color[Piece.RED if args.play_as == "red" else Piece.YELLOW]
-    them = _color[Piece.YELLOW if args.play_as == "red" else Piece.RED]
-    print(f"Connect 4 — You are {you}, bot is {them}")
+    you_piece = Piece.RED if args.play_as == "red" else Piece.YELLOW
+    bot_piece = you_piece.opponent
+    print(f"Connect 4 — You are {you_piece.colored_name}, bot is {bot_piece.colored_name}")
     print(game.board)
 
     for state in game.play():
-        print(f"\n{_color[state.piece]} plays column {state.column}")
+        print(f"\n{state.piece.colored_name} plays column {state.column + 1}")
         print(state.board)
 
         if state.winner:
-            print(f"\n{_color[state.winner]} wins!")
+            print(f"\n{state.winner.colored_name} wins!")
             break
         elif state.is_draw:
             print("\nIt's a draw!")
