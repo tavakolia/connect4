@@ -40,28 +40,29 @@ Target: staff+ take-home. Evaluation weights code quality, testing rigor, and sy
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    CLI (cli.py)                      │  UI Layer
-│              thin wrapper, no logic                  │  (swappable)
-└──────────────────────┬──────────────────────────────┘
-                       │ iterates generator
-┌──────────────────────▼──────────────────────────────┐
-│                  Game (game.py)                      │  Orchestration
-│         pairs Players with Board, yields states      │
-└─────────┬────────────────────────────────┬──────────┘
-          │ calls choose_column            │ calls drop/has_winner
-┌─────────▼──────────┐          ┌──────────▼──────────┐
-│  Players (players/) │          │   Board (board.py)  │  Core Engine
-│                     │          │                     │
-│  ┌───────────────┐  │  reads   │  state, rules,      │
-│  │ MinimaxPlayer ├──┼──────────▶  win/draw detection  │
-│  │ RandomPlayer  │  │          │                     │
-│  │ GreedyPlayer  │  │          └─────────────────────┘
-│  │ HumanPlayer   │  │
-│  └───────┬───────┘  │          ┌─────────────────────┐
-│          │          │          │ Evaluation           │
-│          └──────────┼──────────▶ (evaluation.py)     │  Heuristics
-│   (via evaluate fn) │          │ pure function        │
-└─────────────────────┘          └─────────────────────┘
+│                    CLI (cli.py)                      │  Outer orchestration
+│              wires dependencies, runs loop           │
+└──────┬───────────────────────┬────────────┬─────────┘
+       │ iterates generator    │            │ delegates UI
+┌──────▼───────────────────────┐   ┌────────▼─────────┐
+│        Game (game.py)        │   │ TerminalRenderer │  UI Layer
+│ pairs Players with Board,    │   │ (renderer.py)    │
+│ yields GameStates            │   │ satisfies        │
+└──────┬───────────────────────┘   │ HumanUIDelegate  │
+       │ calls choose_column       └────────┬─────────┘
+┌──────▼──────────┐          ┌──────────────▼─────────┐
+│  Players (players/) │          │   Board (board.py)     │  Core Engine
+│                     │          │                        │
+│  ┌───────────────┐  │  reads   │  state, rules,         │
+│  │ MinimaxPlayer ├──┼──────────▶  win/draw detection    │
+│  │ RandomPlayer  │  │          │                        │
+│  │ GreedyPlayer  │  │          └────────────────────────┘
+│  │ HumanPlayer   │◀─┼─ inject UI
+│  └───────┬───────┘  │          ┌────────────────────────┐
+│          │          │          │ Evaluation             │
+│          └──────────┼──────────▶ (evaluation.py)        │  Heuristics
+│   (via evaluate fn) │          │ pure function          │
+└─────────────────────┘          └────────────────────────┘
 
 Shared types: Piece, GameState, MoveResult, MoveAnalysis (types.py)
 ```
@@ -71,32 +72,46 @@ Shared types: Piece, GameState, MoveResult, MoveAnalysis (types.py)
 ```mermaid
 graph TD
     CLI[cli.py] --> Game[game.py]
-    CLI --> HumanPlayer[players/human.py]
-    CLI --> MinimaxPlayer[players/minimax.py]
+    CLI --> Renderer[renderer.py]
+    CLI --> HumanPlayer
+    CLI --> MinimaxPlayer
+    
+    subgraph Player Implementations
+        HumanPlayer[players/human.py]
+        MinimaxPlayer[players/minimax.py]
+        RandomPlayer[players/random.py]
+        GreedyPlayer[players/greedy.py]
+    end
+
+    Renderer --> Board
+    Renderer --> HumanPlayer
+    
     Game --> Board[board.py]
-    Game --> Types[types.py]
     Game --> PlayerProtocol[players/base.py]
+    
     MinimaxPlayer --> Board
     MinimaxPlayer --> Evaluation[evaluation.py]
-    MinimaxPlayer --> Types
-    HumanPlayer --> Types
-    RandomPlayer[players/random.py] --> Types
-    GreedyPlayer[players/greedy.py] --> Board
-    GreedyPlayer --> Types
+    
+    GreedyPlayer --> Board
+    
     Evaluation --> Board
-    Evaluation --> Types
-    Board --> Types
-    PlayerProtocol --> Types
+    
     PlayerProtocol --> Board
+    
+    %% Implicit protocol satisfaction (structural typing)
+    HumanPlayer -.-> PlayerProtocol
+    MinimaxPlayer -.-> PlayerProtocol
+    RandomPlayer -.-> PlayerProtocol
+    GreedyPlayer -.-> PlayerProtocol
 
     style CLI fill:#f9f,stroke:#333
+    style Renderer fill:#f9f,stroke:#333
     style Game fill:#bbf,stroke:#333
     style Board fill:#bfb,stroke:#333
     style Evaluation fill:#bfb,stroke:#333
-    style Types fill:#fbb,stroke:#333
 ```
 
-Key: nothing depends on CLI (it's the outermost layer). `types.py` and `board.py` depend on nothing outside core. Players depend on Board and Types but not on each other.
+Key: nothing depends on CLI (it's the outermost layer). `types.py` and `board.py` depend on nothing outside core. Players depend on Board and Types but not on each other. Renderer is entirely decoupled from the Game.
 
 ---
 
@@ -283,12 +298,12 @@ sequenceDiagram
 - *1D flat array* — Marginally less readable. Index math (`row * COLS + col`) obscures intent.
 - *NumPy array* — Adds a dependency for no meaningful benefit at this scale.
 
-**Why:** Readability matters more than raw performance for a take-home. The 2D list is transparent — you can print it, inspect it in a debugger, reason about it instantly. Row 0 = bottom matches the physical metaphor (gravity drops pieces down). The `__str__` method reverses for display. Bitboard is a known optimization to mention in discussion.
+**Why:** Readability matters more than raw performance for a take-home. The 2D list is transparent — you can print it, inspect it in a debugger, reason about it instantly. Row 0 = bottom matches the physical metaphor (gravity drops pieces down). The `__repr__` method produces a plaintext grid for debug display. Bitboard is a known optimization to mention in discussion.
 
 **2D list layout (our choice):**
 
 ```
-Internal grid[row][col]:          Display (__str__):
+Internal grid[row][col]:          Display (__repr__):
 
 row 5: [ .  .  .  .  .  .  . ]   row 5: | .  .  .  .  .  .  . |  ← top
 row 4: [ .  .  .  .  .  .  . ]   row 4: | .  .  .  .  .  .  . |
@@ -335,15 +350,15 @@ row 0: [ .  Y  R  Y  R  .  . ]   row 0: | .  Y  R  Y  R  .  . |  ← bottom
 
 **Why:** This is the most important architectural boundary in the project. Search and evaluation are independent concerns. You can test each in isolation: "given this board, does the evaluator return a higher score?" vs "given this evaluator, does minimax find the forced win?" The injectable parameter means you can swap heuristics without subclassing.
 
-### D8: Human Input — Dependency Injection
+### D8: Human Input — Dependency Injection (UI Delegate)
 
-**Chosen:** `HumanPlayer(input_fn=input)` — defaults to built-in `input()` but accepts any callable.
+**Chosen:** `HumanPlayer(ui_delegate: HumanUIDelegate)` — relies on an injected UI object for formatting, prompting, and error display.
 
 **Rejected:**
-- *Mock stdin in tests* — Requires patching `sys.stdin`, which is messy and fragile.
+- *Mock stdin in tests / Hardcoded print* — Couples the core engine to terminal ANSI codes and fragile sys.stdin patching.
 - *Handle human input outside the Player protocol* — Would make Game aware of player types. Breaks the uniform interface.
 
-**Why:** `HumanPlayer(input_fn=lambda _: "3")` is a one-line test setup. The Player protocol stays uniform — Game doesn't know or care whether a player is human or bot.
+**Why:** `HumanPlayer(ui_delegate=FakeUI())` is a straightforward test setup. The Player protocol stays uniform — Game doesn't know or care whether a player is human or bot, and `renderer.py` owns all human-facing UI rendering logic entirely decoupled from the core loop.
 
 **Input validation:** `HumanPlayer.choose_column` handles all retry logic (non-integer input, out-of-range column, full column) inside its `while True` loop. The CLI and Game never see invalid input — it's fully contained in the player.
 
@@ -451,7 +466,7 @@ class Board:
     def has_winner(self, piece: Piece) -> bool: ...
     def is_full(self) -> bool: ...
     def copy(self) -> "Board": ...
-    def __str__(self) -> str: ...
+    def __repr__(self) -> str: ...
 ```
 
 - `has_winner(piece)` checks one piece, not both — in the game loop we only check the piece that just moved.
@@ -593,12 +608,18 @@ class MinimaxPlayer:
 ## CLI
 
 ```python
-# cli.py — thin wrapper, no logic
+# cli.py — outer orchestration
 def main():
-    game = Game(red=HumanPlayer(), yellow=MinimaxPlayer())
+    renderer = TerminalRenderer()
+    # CLI delegates human UI needs to the renderer
+    human = HumanPlayer(ui_delegate=renderer)
+    game = Game(red=human, yellow=MinimaxPlayer())
+    
+    renderer.show_board(game.board)
     for state in game.play():
-        print(state.board)
-        # print winner/draw messages
+        renderer.show_move(state.piece, state.column, state.board)
+        # renderer shows winner/draw messages
+```
 
 # __main__.py
 from connect4.cli import main; main()
