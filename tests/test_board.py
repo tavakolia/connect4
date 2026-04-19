@@ -162,13 +162,25 @@ class TestHasWinner:
         assert board.has_winner(Piece.YELLOW) is False
 
 
-class TestStr:
-    def test_str_empty_board(self, board):
-        s = str(board)
+class TestRepr:
+    def test_repr_empty_board(self, board):
+        s = repr(board)
         assert "1" in s
         assert "7" in s
+        # All cells should be empty dots
+        assert "." in s
+        assert "R" not in s
+        assert "Y" not in s
 
-    def test_str_shows_pieces(self, board):
+    def test_repr_shows_pieces(self, board):
         board.drop(column=3, piece=Piece.RED)
-        s = str(board)
-        assert "\u25cf" in s  # filled circle for placed piece
+        s = repr(board)
+        assert "R" in s
+
+    def test_repr_shows_both_pieces(self, board):
+        board.drop(column=0, piece=Piece.RED)
+        board.drop(column=1, piece=Piece.YELLOW)
+        s = repr(board)
+        assert "R" in s
+        assert "Y" in s
+

@@ -40,28 +40,29 @@ Target: staff+ take-home. Evaluation weights code quality, testing rigor, and sy
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                    CLI (cli.py)                      │  UI Layer
-│              thin wrapper, no logic                  │  (swappable)
-└──────────────────────┬──────────────────────────────┘
-                       │ iterates generator
-┌──────────────────────▼──────────────────────────────┐
-│                  Game (game.py)                      │  Orchestration
-│         pairs Players with Board, yields states      │
-└─────────┬────────────────────────────────┬──────────┘
-          │ calls choose_column            │ calls drop/has_winner
-┌─────────▼──────────┐          ┌──────────▼──────────┐
-│  Players (players/) │          │   Board (board.py)  │  Core Engine
-│                     │          │                     │
-│  ┌───────────────┐  │  reads   │  state, rules,      │
-│  │ MinimaxPlayer ├──┼──────────▶  win/draw detection  │
-│  │ RandomPlayer  │  │          │                     │
-│  │ GreedyPlayer  │  │          └─────────────────────┘
-│  │ HumanPlayer   │  │
-│  └───────┬───────┘  │          ┌─────────────────────┐
-│          │          │          │ Evaluation           │
-│          └──────────┼──────────▶ (evaluation.py)     │  Heuristics
-│   (via evaluate fn) │          │ pure function        │
-└─────────────────────┘          └─────────────────────┘
+│                    CLI (cli.py)                      │  Outer orchestration
+│              wires dependencies, runs loop           │
+└──────┬───────────────────────┬────────────┬─────────┘
+       │ iterates generator    │            │ delegates UI
+┌──────▼───────────────────────┐   ┌────────▼─────────┐
+│        Game (game.py)        │   │ TerminalRenderer │  UI Layer
+│ pairs Players with Board,    │   │ (renderer.py)    │
+│ yields GameStates            │   │ satisfies        │
+└──────┬───────────────────────┘   │ HumanUIDelegate  │
+       │ calls choose_column       └────────┬─────────┘
+┌──────▼──────────┐          ┌──────────────▼─────────┐
+│  Players (players/) │          │   Board (board.py)     │  Core Engine
+│                     │          │                        │
+│  ┌───────────────┐  │  reads   │  state, rules,         │
+│  │ MinimaxPlayer ├──┼──────────▶  win/draw detection    │
+│  │ RandomPlayer  │  │          │                        │
+│  │ GreedyPlayer  │  │          └────────────────────────┘
+│  │ HumanPlayer   │◀─┼─ inject UI
+│  └───────┬───────┘  │          ┌────────────────────────┐
+│          │          │          │ Evaluation             │
+│          └──────────┼──────────▶ (evaluation.py)        │  Heuristics
+│   (via evaluate fn) │          │ pure function          │
+└─────────────────────┘          └────────────────────────┘
 
 Shared types: Piece, GameState, MoveResult, MoveAnalysis (types.py)
 ```
@@ -73,6 +74,10 @@ graph TD
     CLI[cli.py] --> Game[game.py]
     CLI --> HumanPlayer[players/human.py]
     CLI --> MinimaxPlayer[players/minimax.py]
+    CLI --> Renderer[renderer.py]
+    Renderer --> Board
+    Renderer --> HumanPlayer
+    Renderer --> Types
     Game --> Board[board.py]
     Game --> Types[types.py]
     Game --> PlayerProtocol[players/base.py]
@@ -90,13 +95,14 @@ graph TD
     PlayerProtocol --> Board
 
     style CLI fill:#f9f,stroke:#333
+    style Renderer fill:#f9f,stroke:#333
     style Game fill:#bbf,stroke:#333
     style Board fill:#bfb,stroke:#333
     style Evaluation fill:#bfb,stroke:#333
     style Types fill:#fbb,stroke:#333
 ```
 
-Key: nothing depends on CLI (it's the outermost layer). `types.py` and `board.py` depend on nothing outside core. Players depend on Board and Types but not on each other.
+Key: nothing depends on CLI (it's the outermost layer). `types.py` and `board.py` depend on nothing outside core. Players depend on Board and Types but not on each other. Renderer is entirely decoupled from the Game.
 
 ---
 
@@ -593,12 +599,18 @@ class MinimaxPlayer:
 ## CLI
 
 ```python
-# cli.py — thin wrapper, no logic
+# cli.py — outer orchestration
 def main():
-    game = Game(red=HumanPlayer(), yellow=MinimaxPlayer())
+    renderer = TerminalRenderer()
+    # CLI delegates human UI needs to the renderer
+    human = HumanPlayer(ui_delegate=renderer)
+    game = Game(red=human, yellow=MinimaxPlayer())
+    
+    renderer.show_board(game.board)
     for state in game.play():
-        print(state.board)
-        # print winner/draw messages
+        renderer.show_move(state.piece, state.column, state.board)
+        # renderer shows winner/draw messages
+```
 
 # __main__.py
 from connect4.cli import main; main()
