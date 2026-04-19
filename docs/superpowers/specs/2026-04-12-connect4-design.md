@@ -85,28 +85,17 @@ graph TD
 
     Renderer --> Board
     Renderer --> HumanPlayer
-    Renderer --> Types
     
     Game --> Board[board.py]
-    Game --> Types[types.py]
     Game --> PlayerProtocol[players/base.py]
     
     MinimaxPlayer --> Board
     MinimaxPlayer --> Evaluation[evaluation.py]
-    MinimaxPlayer --> Types
     
-    HumanPlayer --> Types
-    
-    RandomPlayer --> Types
     GreedyPlayer --> Board
-    GreedyPlayer --> Types
     
     Evaluation --> Board
-    Evaluation --> Types
     
-    Board --> Types
-    
-    PlayerProtocol --> Types
     PlayerProtocol --> Board
 
     style CLI fill:#f9f,stroke:#333
@@ -114,7 +103,6 @@ graph TD
     style Game fill:#bbf,stroke:#333
     style Board fill:#bfb,stroke:#333
     style Evaluation fill:#bfb,stroke:#333
-    style Types fill:#fbb,stroke:#333
 ```
 
 Key: nothing depends on CLI (it's the outermost layer). `types.py` and `board.py` depend on nothing outside core. Players depend on Board and Types but not on each other. Renderer is entirely decoupled from the Game.
