@@ -298,12 +298,12 @@ sequenceDiagram
 - *1D flat array* — Marginally less readable. Index math (`row * COLS + col`) obscures intent.
 - *NumPy array* — Adds a dependency for no meaningful benefit at this scale.
 
-**Why:** Readability matters more than raw performance for a take-home. The 2D list is transparent — you can print it, inspect it in a debugger, reason about it instantly. Row 0 = bottom matches the physical metaphor (gravity drops pieces down). The `__str__` method reverses for display. Bitboard is a known optimization to mention in discussion.
+**Why:** Readability matters more than raw performance for a take-home. The 2D list is transparent — you can print it, inspect it in a debugger, reason about it instantly. Row 0 = bottom matches the physical metaphor (gravity drops pieces down). The `__repr__` method produces a plaintext grid for debug display. Bitboard is a known optimization to mention in discussion.
 
 **2D list layout (our choice):**
 
 ```
-Internal grid[row][col]:          Display (__str__):
+Internal grid[row][col]:          Display (__repr__):
 
 row 5: [ .  .  .  .  .  .  . ]   row 5: | .  .  .  .  .  .  . |  ← top
 row 4: [ .  .  .  .  .  .  . ]   row 4: | .  .  .  .  .  .  . |
@@ -350,15 +350,15 @@ row 0: [ .  Y  R  Y  R  .  . ]   row 0: | .  Y  R  Y  R  .  . |  ← bottom
 
 **Why:** This is the most important architectural boundary in the project. Search and evaluation are independent concerns. You can test each in isolation: "given this board, does the evaluator return a higher score?" vs "given this evaluator, does minimax find the forced win?" The injectable parameter means you can swap heuristics without subclassing.
 
-### D8: Human Input — Dependency Injection
+### D8: Human Input — Dependency Injection (UI Delegate)
 
-**Chosen:** `HumanPlayer(input_fn=input)` — defaults to built-in `input()` but accepts any callable.
+**Chosen:** `HumanPlayer(ui_delegate: HumanUIDelegate)` — relies on an injected UI object for formatting, prompting, and error display.
 
 **Rejected:**
-- *Mock stdin in tests* — Requires patching `sys.stdin`, which is messy and fragile.
+- *Mock stdin in tests / Hardcoded print* — Couples the core engine to terminal ANSI codes and fragile sys.stdin patching.
 - *Handle human input outside the Player protocol* — Would make Game aware of player types. Breaks the uniform interface.
 
-**Why:** `HumanPlayer(input_fn=lambda _: "3")` is a one-line test setup. The Player protocol stays uniform — Game doesn't know or care whether a player is human or bot.
+**Why:** `HumanPlayer(ui_delegate=FakeUI())` is a straightforward test setup. The Player protocol stays uniform — Game doesn't know or care whether a player is human or bot, and `renderer.py` owns all human-facing UI rendering logic entirely decoupled from the core loop.
 
 **Input validation:** `HumanPlayer.choose_column` handles all retry logic (non-integer input, out-of-range column, full column) inside its `while True` loop. The CLI and Game never see invalid input — it's fully contained in the player.
 
@@ -466,7 +466,7 @@ class Board:
     def has_winner(self, piece: Piece) -> bool: ...
     def is_full(self) -> bool: ...
     def copy(self) -> "Board": ...
-    def __str__(self) -> str: ...
+    def __repr__(self) -> str: ...
 ```
 
 - `has_winner(piece)` checks one piece, not both — in the game loop we only check the piece that just moved.
