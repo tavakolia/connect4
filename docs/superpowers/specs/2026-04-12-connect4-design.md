@@ -72,25 +72,40 @@ Shared types: Piece, GameState, MoveResult, MoveAnalysis (types.py)
 ```mermaid
 graph TD
     CLI[cli.py] --> Game[game.py]
-    CLI --> HumanPlayer[players/human.py]
-    CLI --> MinimaxPlayer[players/minimax.py]
     CLI --> Renderer[renderer.py]
+    CLI --> HumanPlayer
+    CLI --> MinimaxPlayer
+    
+    subgraph Player Implementations
+        HumanPlayer[players/human.py]
+        MinimaxPlayer[players/minimax.py]
+        RandomPlayer[players/random.py]
+        GreedyPlayer[players/greedy.py]
+    end
+
     Renderer --> Board
     Renderer --> HumanPlayer
     Renderer --> Types
+    
     Game --> Board[board.py]
     Game --> Types[types.py]
     Game --> PlayerProtocol[players/base.py]
+    
     MinimaxPlayer --> Board
     MinimaxPlayer --> Evaluation[evaluation.py]
     MinimaxPlayer --> Types
+    
     HumanPlayer --> Types
-    RandomPlayer[players/random.py] --> Types
-    GreedyPlayer[players/greedy.py] --> Board
+    
+    RandomPlayer --> Types
+    GreedyPlayer --> Board
     GreedyPlayer --> Types
+    
     Evaluation --> Board
     Evaluation --> Types
+    
     Board --> Types
+    
     PlayerProtocol --> Types
     PlayerProtocol --> Board
 
