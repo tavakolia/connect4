@@ -97,6 +97,12 @@ graph TD
     Evaluation --> Board
     
     PlayerProtocol --> Board
+    
+    %% Implicit protocol satisfaction (structural typing)
+    HumanPlayer -.-> PlayerProtocol
+    MinimaxPlayer -.-> PlayerProtocol
+    RandomPlayer -.-> PlayerProtocol
+    GreedyPlayer -.-> PlayerProtocol
 
     style CLI fill:#f9f,stroke:#333
     style Renderer fill:#f9f,stroke:#333
