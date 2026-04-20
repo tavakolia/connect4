@@ -1,4 +1,3 @@
-import pytest
 from connect4.board import Board
 from connect4.players.random import RandomPlayer
 from connect4.types import Piece

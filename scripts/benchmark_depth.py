@@ -16,7 +16,12 @@ from connect4.types import Piece
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark minimax at each depth")
     parser.add_argument("--max-depth", type=int, default=10, help="Max depth to test")
-    parser.add_argument("--max-time", type=float, default=30.0, help="Stop if a single move exceeds this (seconds)")
+    parser.add_argument(
+        "--max-time",
+        type=float,
+        default=30.0,
+        help="Stop if a single move exceeds this (seconds)",
+    )
     args = parser.parse_args()
 
     # Mid-game position (more realistic than empty board)

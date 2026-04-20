@@ -12,10 +12,13 @@ You play as RED (first move), the bot plays as YELLOW. Enter a column number (1-
 
 ### Options
 
+The CLI allows you to pit any combination of players against each other. Supported players include `human`, `minimax`, `greedy`, and `random`.
+Arguments (like search depth for `minimax`) are provided immediately following the player's name.
+
 ```bash
-python -m connect4 --play-as yellow    # let the bot go first
-python -m connect4 --depth 8           # harder bot (default: 6)
-python -m connect4 --depth 2           # easier bot
+python -m connect4 minimax 8 human   # let the bot go first (depth 8)
+python -m connect4 human minimax 2   # play as red against an easy bot (depth 2)
+python -m connect4 greedy random     # fast bot vs bot
 ```
 
 ## Using as a Library

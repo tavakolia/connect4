@@ -40,4 +40,6 @@ class TestGreedyPlayer:
         board = Board()
         p1 = GreedyPlayer(seed=42)
         p2 = GreedyPlayer(seed=42)
-        assert p1.choose_column(board, Piece.RED).column == p2.choose_column(board, Piece.RED).column
+        assert (
+            p1.choose_column(board, Piece.RED).column == p2.choose_column(board, Piece.RED).column
+        )

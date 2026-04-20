@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import enum
 import dataclasses
+import enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

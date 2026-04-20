@@ -1,5 +1,3 @@
-import math
-
 from connect4.board import Board
 from connect4.players.minimax import MinimaxPlayer
 from connect4.types import Piece
@@ -23,7 +21,6 @@ class TestForcedWin:
         player = MinimaxPlayer(depth=1)
         result = player.choose_column(board, Piece.RED)
         assert result.column == 0
-
 
     def test_takes_immediate_win_over_deep_win(self):
         """When multiple columns lead to wins, bot must take the immediate one.

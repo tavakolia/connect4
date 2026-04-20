@@ -2,6 +2,7 @@ import io
 import sys
 
 import pytest
+
 from connect4.board import Board
 from connect4.renderer import TerminalRenderer
 from connect4.types import Piece

@@ -1,5 +1,5 @@
 # tests/test_types.py
-from connect4.types import Piece, MoveResult, MoveAnalysis
+from connect4.types import MoveAnalysis, MoveResult, Piece
 
 
 class TestPiece:
@@ -27,9 +27,10 @@ class TestMoveResult:
 
     def test_move_result_is_frozen(self):
         import dataclasses
+
         result = MoveResult(column=3)
         try:
             result.column = 5
-            assert False, "Should have raised"
+            raise AssertionError("Should have raised")
         except dataclasses.FrozenInstanceError:
             pass

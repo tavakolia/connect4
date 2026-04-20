@@ -1,4 +1,3 @@
-import pytest
 from connect4.board import Board
 from connect4.players.human import HumanPlayer
 from connect4.types import Piece
@@ -52,7 +51,7 @@ class TestHumanPlayer:
         board = Board()
         for _ in range(Board.ROWS):
             board.drop(column=3, piece=Piece.RED)
-        
+
         ui = FakeUI(["4", "5"])  # col 4 (internal 3) is full, col 5 (internal 4) works
         player = HumanPlayer(ui_delegate=ui)
         result = player.choose_column(board, Piece.RED)
@@ -64,4 +63,3 @@ class TestHumanPlayer:
         player = HumanPlayer(ui_delegate=ui)
         result = player.choose_column(Board(), Piece.RED)
         assert result.analysis is None
-
