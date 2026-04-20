@@ -1,4 +1,5 @@
 from connect4.board import Board
+from connect4.players.base import InteractivePlayer
 from connect4.players.human import HumanPlayer
 from connect4.types import Piece
 
@@ -63,3 +64,6 @@ class TestHumanPlayer:
         player = HumanPlayer(ui_delegate=ui)
         result = player.choose_column(Board(), Piece.RED)
         assert result.analysis is None
+
+    def test_is_interactive(self):
+        assert isinstance(HumanPlayer, InteractivePlayer)

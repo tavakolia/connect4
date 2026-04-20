@@ -8,6 +8,7 @@ import sys
 import typing
 
 from connect4.game import Game
+from connect4.players.base import InteractivePlayer
 from connect4.renderer import TerminalRenderer
 from connect4.types import Piece
 
@@ -108,8 +109,5 @@ def main() -> None:
             renderer.show_draw()
             break
 
-        if (
-            type(red_player).__name__ != "HumanPlayer"
-            and type(yellow_player).__name__ != "HumanPlayer"
-        ):
+        if not isinstance(red_player, InteractivePlayer) and not isinstance(yellow_player, InteractivePlayer):
             time.sleep(0.5)

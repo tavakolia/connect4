@@ -14,6 +14,8 @@ class HumanUIDelegate(Protocol):
 
 
 class HumanPlayer:
+    is_interactive = True
+
     def __init__(self, ui_delegate: HumanUIDelegate) -> None:
         self._ui = ui_delegate
 

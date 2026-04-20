@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from connect4.cli import _load_player
+from connect4.players.base import InteractivePlayer
 from connect4.players.greedy import GreedyPlayer
 from connect4.players.human import HumanPlayer
 from connect4.players.minimax import MinimaxPlayer
@@ -78,3 +79,8 @@ def test_load_player_greedy_with_seed():
     player = _load_player(tokens, renderer)
     assert isinstance(player, GreedyPlayer)
     assert tokens == ["human"]
+
+
+def test_bot_players_are_not_interactive():
+    for cls in (RandomPlayer, GreedyPlayer, MinimaxPlayer):
+        assert not isinstance(cls, InteractivePlayer), f"{cls.__name__} should not be interactive"
