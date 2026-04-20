@@ -78,3 +78,8 @@ def test_load_player_greedy_with_seed():
     player = _load_player(tokens, renderer)
     assert isinstance(player, GreedyPlayer)
     assert tokens == ["human"]
+
+
+def test_bot_players_are_not_interactive():
+    for cls in (RandomPlayer, GreedyPlayer, MinimaxPlayer):
+        assert not getattr(cls, "is_interactive", False), f"{cls.__name__} should not be interactive"

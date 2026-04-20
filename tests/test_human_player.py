@@ -63,3 +63,6 @@ class TestHumanPlayer:
         player = HumanPlayer(ui_delegate=ui)
         result = player.choose_column(Board(), Piece.RED)
         assert result.analysis is None
+
+    def test_is_interactive(self):
+        assert HumanPlayer.is_interactive is True

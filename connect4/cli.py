@@ -108,8 +108,5 @@ def main() -> None:
             renderer.show_draw()
             break
 
-        if (
-            type(red_player).__name__ != "HumanPlayer"
-            and type(yellow_player).__name__ != "HumanPlayer"
-        ):
+        if not getattr(red_player, "is_interactive", False) and not getattr(yellow_player, "is_interactive", False):
             time.sleep(0.5)
