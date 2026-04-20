@@ -5,6 +5,7 @@ import importlib
 import inspect
 import logging
 import sys
+import typing
 
 from connect4.game import Game
 from connect4.renderer import TerminalRenderer
@@ -28,6 +29,7 @@ def _load_player(tokens: list[str], renderer: TerminalRenderer):
         raise ValueError(f"Could not find class {class_name} in connect4.players.{token}") from e
 
     sig = inspect.signature(player_class.__init__)
+    hints = typing.get_type_hints(player_class.__init__)
     kwargs = {}
 
     for name, param in sig.parameters.items():
@@ -38,12 +40,10 @@ def _load_player(tokens: list[str], renderer: TerminalRenderer):
             kwargs[name] = renderer
             continue
 
-        # Check if the annotation indicates an integer
-        is_int = (
-            param.annotation is int
-            or param.annotation == "int"
-            or getattr(param.annotation, "__name__", "") == "int"
-        )
+        # Check if the annotation indicates an integer (handles int | None unions)
+        hint = hints.get(name, param.annotation)
+        args = typing.get_args(hint)
+        is_int = hint is int or (len(args) > 0 and int in args)
 
         if is_int:
             if tokens and tokens[0].lstrip("-").isdigit():

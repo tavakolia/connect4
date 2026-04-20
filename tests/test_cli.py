@@ -6,6 +6,7 @@ from connect4.cli import _load_player
 from connect4.players.greedy import GreedyPlayer
 from connect4.players.human import HumanPlayer
 from connect4.players.minimax import MinimaxPlayer
+from connect4.players.random import RandomPlayer
 from connect4.renderer import TerminalRenderer
 
 
@@ -59,3 +60,21 @@ def test_load_player_missing_tokens():
     tokens = []
     with pytest.raises(ValueError, match="Not enough players specified"):
         _load_player(tokens, renderer)
+
+
+def test_load_player_random_with_seed():
+    renderer = MagicMock(spec=TerminalRenderer)
+    # "42" should be consumed as the seed (int | None annotation), leaving "human" untouched
+    tokens = ["random", "42", "human"]
+    player = _load_player(tokens, renderer)
+    assert isinstance(player, RandomPlayer)
+    assert tokens == ["human"]
+
+
+def test_load_player_greedy_with_seed():
+    renderer = MagicMock(spec=TerminalRenderer)
+    # "7" should be consumed as the seed (int | None annotation), leaving "human" untouched
+    tokens = ["greedy", "7", "human"]
+    player = _load_player(tokens, renderer)
+    assert isinstance(player, GreedyPlayer)
+    assert tokens == ["human"]
