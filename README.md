@@ -65,7 +65,7 @@ CLI (cli.py) → Game (game.py) → Players + Board (board.py) → Evaluation (e
 python -m pytest tests/ -v
 ```
 
-319 tests covering:
+339 tests covering:
 - Board mechanics and win detection (all 4 directions, edge cases)
 - Minimax correctness (forced wins, forced blocks, immediate-win priority)
 - Evaluation function (terminal states, center preference, window scoring)
@@ -86,7 +86,7 @@ connect4/
 ├── cli.py               # Terminal entry point
 ├── __main__.py           # python -m connect4
 └── players/
-    ├── base.py          # Player protocol
+    ├── base.py          # Player and InteractivePlayer protocols
     ├── minimax.py       # Minimax with alpha-beta pruning
     ├── random.py        # Random player (seeded)
     ├── greedy.py        # One-ply greedy player

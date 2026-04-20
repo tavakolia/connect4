@@ -1,4 +1,5 @@
 from connect4.board import Board
+from connect4.players.base import InteractivePlayer
 from connect4.players.human import HumanPlayer
 from connect4.types import Piece
 
@@ -65,4 +66,4 @@ class TestHumanPlayer:
         assert result.analysis is None
 
     def test_is_interactive(self):
-        assert HumanPlayer.is_interactive is True
+        assert isinstance(HumanPlayer, InteractivePlayer)

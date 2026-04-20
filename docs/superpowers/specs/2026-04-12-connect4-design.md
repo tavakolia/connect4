@@ -73,9 +73,11 @@ Shared types: Piece, GameState, MoveResult, MoveAnalysis (types.py)
 graph TD
     CLI[cli.py] --> Game[game.py]
     CLI --> Renderer[renderer.py]
-    CLI --> HumanPlayer
-    CLI --> MinimaxPlayer
-    
+    CLI --> PlayerProtocol
+
+    %% CLI loads players dynamically via importlib reflection —
+    %% no static imports to concrete player classes
+
     subgraph Player Implementations
         HumanPlayer[players/human.py]
         MinimaxPlayer[players/minimax.py]
@@ -85,19 +87,19 @@ graph TD
 
     Renderer --> Board
     Renderer --> HumanPlayer
-    
+
     Game --> Board[board.py]
-    Game --> PlayerProtocol[players/base.py]
-    
+    Game --> PlayerProtocol["players/base.py\n(Player + InteractivePlayer)"]
+
     MinimaxPlayer --> Board
     MinimaxPlayer --> Evaluation[evaluation.py]
-    
+
     GreedyPlayer --> Board
-    
+
     Evaluation --> Board
-    
+
     PlayerProtocol --> Board
-    
+
     %% Implicit protocol satisfaction (structural typing)
     HumanPlayer -.-> PlayerProtocol
     MinimaxPlayer -.-> PlayerProtocol
@@ -500,7 +502,13 @@ Edge cases: wins touching the board edges (row 0, row 5, col 0, col 6).
 
 class Player(Protocol):
     def choose_column(self, board: Board, piece: Piece) -> MoveResult: ...
+
+@runtime_checkable
+class InteractivePlayer(Player, Protocol):
+    is_interactive: ClassVar[bool]
 ```
+
+`Player` is the uniform interface for all player types. `InteractivePlayer` composes `Player` with an `is_interactive` class variable — satisfied only by players that declare it (currently just `HumanPlayer`). The CLI uses `isinstance(player, InteractivePlayer)` to detect interactive players without importing any concrete class.
 
 Implementations: `MinimaxPlayer`, `RandomPlayer`, `GreedyPlayer`, `HumanPlayer`.
 
