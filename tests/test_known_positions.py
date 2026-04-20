@@ -66,19 +66,7 @@ class TestWinInOne:
             3,  # Y at (1,3)
             3,  # R at (2,3)
             6,  # Y at (0,6)
-            3,  # R at (3,3) — this is RED's 11th piece, but we want to test finding it
         ])
-        # Actually, let's set it up so RED needs to play col 3 for the diagonal
-        board = Board()
-        board.drop(0, Piece.RED)       # (0,0) R
-        board.drop(1, Piece.YELLOW)    # (0,1) Y
-        board.drop(1, Piece.RED)       # (1,1) R
-        board.drop(2, Piece.YELLOW)    # (0,2) Y
-        board.drop(2, Piece.YELLOW)    # (1,2) Y
-        board.drop(2, Piece.RED)       # (2,2) R
-        board.drop(3, Piece.YELLOW)    # (0,3) Y
-        board.drop(3, Piece.YELLOW)    # (1,3) Y
-        board.drop(3, Piece.YELLOW)    # (2,3) Y
         # RED needs to play col 3 to get (3,3) for the diagonal win
         player = MinimaxPlayer(depth=1)
         result = player.choose_column(board, Piece.RED)
@@ -178,12 +166,12 @@ class TestTrapPositions:
         board.drop(2, Piece.YELLOW)
         board.drop(3, Piece.YELLOW)
         # RED has random pieces elsewhere to not be turn 1
-        board.drop(5, Piece.RED)
+        board.drop(4, Piece.RED)
         board.drop(6, Piece.RED)
         player = MinimaxPlayer(depth=2)
         result = player.choose_column(board, Piece.RED)
-        # Must block at col 0 or col 4
-        assert result.column in [0, 4]
+        # Must block at col 0
+        assert result.column == 0
 
 
 class TestLateGame:
@@ -212,3 +200,7 @@ class TestLateGame:
         player = MinimaxPlayer(depth=6)
         result = player.choose_column(board, Piece.RED)
         assert result.column in [5, 6]  # only valid columns
+        # Verify it actually produces a win
+        clone = board.copy()
+        clone.drop(result.column, Piece.RED)
+        assert clone.has_winner(Piece.RED)
