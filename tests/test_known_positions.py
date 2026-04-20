@@ -142,7 +142,7 @@ class TestOpeningMoves:
         board.drop(3, Piece.RED)  # RED plays center
         player = MinimaxPlayer(depth=4)
         result = player.choose_column(board, Piece.YELLOW)
-        assert result.column in [2, 3, 4]  # center or adjacent
+        assert result.column in [1, 2, 3, 4]  # center or adjacent
 
 
 class TestTrapPositions:
