@@ -6,6 +6,7 @@ from connect4.board import Board
 from connect4.types import Piece
 
 _SCORE_TWO = 10
+_SCORE_TWO_SCATTERED = 2
 _SCORE_THREE = 100
 _SCORE_CENTER = 6
 
@@ -30,6 +31,12 @@ def evaluate(board: Board, piece: Piece) -> float:
     return score
 
 
+def _is_contiguous(window: list[Piece | None], piece: Piece) -> bool:
+    """Return True if all of piece's cells in the window are adjacent."""
+    indices = [i for i, cell in enumerate(window) if cell == piece]
+    return (max(indices) - min(indices)) == len(indices) - 1
+
+
 def _score_window(window: list[Piece | None], piece: Piece, opponent: Piece) -> float:
     own = window.count(piece)
     opp = window.count(opponent)
@@ -37,10 +44,12 @@ def _score_window(window: list[Piece | None], piece: Piece, opponent: Piece) -> 
 
     if own == 3 and empty == 1:
         return _SCORE_THREE
-    if own == 2 and empty == 2:
-        return _SCORE_TWO
     if opp == 3 and empty == 1:
         return -_SCORE_THREE
+    if own == 2 and empty == 2:
+        return _SCORE_TWO if _is_contiguous(window, piece) else _SCORE_TWO_SCATTERED
+    if opp == 2 and empty == 2:
+        return -(_SCORE_TWO if _is_contiguous(window, opponent) else _SCORE_TWO_SCATTERED)
     return 0
 
 
