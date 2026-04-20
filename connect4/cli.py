@@ -18,14 +18,14 @@ def _load_player(tokens: list[str], renderer: TerminalRenderer):
     token = tokens.pop(0).lower()
     try:
         module = importlib.import_module(f"connect4.players.{token}")
-    except ModuleNotFoundError:
-        raise ValueError(f"Unknown player type: '{token}'")
+    except ModuleNotFoundError as e:
+        raise ValueError(f"Unknown player type: '{token}'") from e
 
     class_name = token.title() + "Player"
     try:
         player_class = getattr(module, class_name)
-    except AttributeError:
-        raise ValueError(f"Could not find class {class_name} in connect4.players.{token}")
+    except AttributeError as e:
+        raise ValueError(f"Could not find class {class_name} in connect4.players.{token}") from e
 
     sig = inspect.signature(player_class.__init__)
     kwargs = {}
@@ -93,11 +93,11 @@ def main() -> None:
     renderer.show_welcome(Piece.RED, Piece.YELLOW)
     renderer.show_board(game.board)
 
-    # Note: TerminalRenderer.show_welcome mentions "You are RED". 
+    # Note: TerminalRenderer.show_welcome mentions "You are RED".
     # This might look slightly off in bot vs bot, but matches original behavior.
 
     import time
-    
+
     for state in game.play():
         renderer.show_move(state.piece, state.column, state.board)
 
@@ -107,6 +107,9 @@ def main() -> None:
         elif state.is_draw:
             renderer.show_draw()
             break
-            
-        if type(red_player).__name__ != "HumanPlayer" and type(yellow_player).__name__ != "HumanPlayer":
+
+        if (
+            type(red_player).__name__ != "HumanPlayer"
+            and type(yellow_player).__name__ != "HumanPlayer"
+        ):
             time.sleep(0.5)

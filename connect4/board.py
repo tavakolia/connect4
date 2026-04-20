@@ -9,9 +9,7 @@ class Board:
     CONNECT = 4
 
     def __init__(self) -> None:
-        self._grid: list[list[Piece | None]] = [
-            [None] * self.COLS for _ in range(self.ROWS)
-        ]
+        self._grid: list[list[Piece | None]] = [[None] * self.COLS for _ in range(self.ROWS)]
 
     def drop(self, column: int, piece: Piece) -> int:
         """Drop a piece into the given column. Returns the row it landed in."""

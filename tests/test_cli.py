@@ -1,11 +1,13 @@
-import pytest
 from unittest.mock import MagicMock
 
+import pytest
+
 from connect4.cli import _load_player
+from connect4.players.greedy import GreedyPlayer
 from connect4.players.human import HumanPlayer
 from connect4.players.minimax import MinimaxPlayer
-from connect4.players.greedy import GreedyPlayer
 from connect4.renderer import TerminalRenderer
+
 
 def test_load_player_human():
     renderer = MagicMock(spec=TerminalRenderer)
@@ -16,6 +18,7 @@ def test_load_player_human():
     assert player._ui == renderer
     assert len(tokens) == 0
 
+
 def test_load_player_minimax_with_depth():
     renderer = MagicMock(spec=TerminalRenderer)
     # "4" should be consumed, leaving "greedy" in the tokens list
@@ -24,6 +27,7 @@ def test_load_player_minimax_with_depth():
     assert isinstance(player, MinimaxPlayer)
     assert player.depth == 4
     assert tokens == ["greedy"]
+
 
 def test_load_player_minimax_default_depth():
     renderer = MagicMock(spec=TerminalRenderer)
@@ -34,6 +38,7 @@ def test_load_player_minimax_default_depth():
     assert player.depth == 6
     assert tokens == ["greedy"]
 
+
 def test_load_player_greedy():
     renderer = MagicMock(spec=TerminalRenderer)
     tokens = ["greedy"]
@@ -41,11 +46,13 @@ def test_load_player_greedy():
     assert isinstance(player, GreedyPlayer)
     assert len(tokens) == 0
 
+
 def test_load_unknown_player():
     renderer = MagicMock(spec=TerminalRenderer)
     tokens = ["idonotexist"]
     with pytest.raises(ValueError, match="Unknown player type"):
         _load_player(tokens, renderer)
+
 
 def test_load_player_missing_tokens():
     renderer = MagicMock(spec=TerminalRenderer)
