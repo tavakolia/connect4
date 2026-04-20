@@ -25,14 +25,14 @@ class HumanPlayer:
             except ValueError:
                 self._ui.show_error_invalid_input(raw)
                 continue
-            
+
             column = display_col - 1  # convert to 0-indexed
-            
+
             if not board.is_valid_column(column):
                 if column < 0 or column >= Board.COLS:
                     self._ui.show_error_out_of_range(display_col)
                 else:
                     self._ui.show_error_column_full(display_col)
                 continue
-            
+
             return MoveResult(column=column)

@@ -43,9 +43,7 @@ class MinimaxPlayer:
                 logger.debug("Column %d: immediate win", col)
                 return col
 
-            score = self._minimax(
-                child, piece, self.depth - 1, -math.inf, math.inf, False
-            )
+            score = self._minimax(child, piece, self.depth - 1, -math.inf, math.inf, False)
 
             analyses.append(MoveAnalysis(column=col, score=score, max_depth=self.depth))
             logger.debug("Column %d: score=%.2f", col, score)

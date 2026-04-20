@@ -22,10 +22,7 @@ def evaluate(board: Board, piece: Piece) -> float:
     score = 0.0
 
     center_col = Board.COLS // 2
-    center_count = sum(
-        1 for row in range(Board.ROWS)
-        if board.get(row, center_col) == piece
-    )
+    center_count = sum(1 for row in range(Board.ROWS) if board.get(row, center_col) == piece)
     score += center_count * _SCORE_CENTER
 
     score += _score_all_windows(board, piece, opponent)

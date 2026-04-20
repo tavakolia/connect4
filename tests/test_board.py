@@ -1,4 +1,5 @@
 import pytest
+
 from connect4.board import Board
 from connect4.types import Piece
 
@@ -67,7 +68,7 @@ class TestIsFull:
 
     def test_full_board(self, board):
         for col in range(Board.COLS):
-            for row in range(Board.ROWS):
+            for _row in range(Board.ROWS):
                 board.drop(column=col, piece=Piece.RED)
         assert board.is_full() is True
 
@@ -183,4 +184,3 @@ class TestRepr:
         s = repr(board)
         assert "R" in s
         assert "Y" in s
-

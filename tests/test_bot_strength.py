@@ -79,11 +79,15 @@ class TestGameInvariants:
         states = self._play_full_game(seed)
         for state in states:
             red = sum(
-                1 for r in range(Board.ROWS) for c in range(Board.COLS)
+                1
+                for r in range(Board.ROWS)
+                for c in range(Board.COLS)
                 if state.board._grid[r][c] == Piece.RED
             )
             yellow = sum(
-                1 for r in range(Board.ROWS) for c in range(Board.COLS)
+                1
+                for r in range(Board.ROWS)
+                for c in range(Board.COLS)
                 if state.board._grid[r][c] == Piece.YELLOW
             )
             assert abs(red - yellow) <= 1

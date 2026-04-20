@@ -611,10 +611,14 @@ class MinimaxPlayer:
 # cli.py — outer orchestration
 def main():
     renderer = TerminalRenderer()
-    # CLI delegates human UI needs to the renderer
-    human = HumanPlayer(ui_delegate=renderer)
-    game = Game(red=human, yellow=MinimaxPlayer())
+    # Uses 'importlib' and 'inspect' to dynamically load players from 'connect4.players'
+    # Auto-injects dependencies like 'ui_delegate' and casts integers for params like 'depth'
+    red_player = _load_player(tokens, renderer)
+    yellow_player = _load_player(tokens, renderer)
     
+    game = Game(red=red_player, yellow=yellow_player)
+    
+    renderer.show_welcome(Piece.RED, Piece.YELLOW)
     renderer.show_board(game.board)
     for state in game.play():
         renderer.show_move(state.piece, state.column, state.board)

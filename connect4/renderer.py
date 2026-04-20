@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Protocol, TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 from connect4.types import ANSI_RED, ANSI_RESET, ANSI_YELLOW, Piece
 
@@ -29,12 +29,12 @@ class TerminalRenderer:
     """Renders game events to stdout with ANSI colors and box-drawing characters."""
 
     # Display characters
-    _FILLED = "●"   # U+25CF BLACK CIRCLE
-    _EMPTY = "○"    # U+25CB WHITE CIRCLE
-    _BOX_V = "│"    # U+2502 BOX DRAWINGS LIGHT VERTICAL
-    _BOX_BL = "└"   # U+2514 BOX DRAWINGS LIGHT UP AND RIGHT
-    _BOX_BR = "┘"   # U+2518 BOX DRAWINGS LIGHT UP AND LEFT
-    _BOX_H = "─"    # U+2500 BOX DRAWINGS LIGHT HORIZONTAL
+    _FILLED = "●"  # U+25CF BLACK CIRCLE
+    _EMPTY = "○"  # U+25CB WHITE CIRCLE
+    _BOX_V = "│"  # U+2502 BOX DRAWINGS LIGHT VERTICAL
+    _BOX_BL = "└"  # U+2514 BOX DRAWINGS LIGHT UP AND RIGHT
+    _BOX_BR = "┘"  # U+2518 BOX DRAWINGS LIGHT UP AND LEFT
+    _BOX_H = "─"  # U+2500 BOX DRAWINGS LIGHT HORIZONTAL
 
     _DISPLAY = {
         Piece.RED: f"{ANSI_RED}{_FILLED}{ANSI_RESET}",
@@ -44,7 +44,6 @@ class TerminalRenderer:
 
     def format_board(self, board: Board) -> str:
         """Format the board as a string with ANSI colors and box-drawing borders."""
-        from connect4.board import Board as BoardClass
 
         # Build an empty row to measure visible width (no ANSI escapes)
         empty_inner = " " + "  ".join([self._EMPTY] * board.COLS) + " "
