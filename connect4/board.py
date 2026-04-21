@@ -40,7 +40,7 @@ class Board:
         return new_board
 
     def has_winner(self, piece: Piece) -> bool:
-        """Check if the given piece has four in a row."""
+        """Check if the given piece has four in a row (full board scan)."""
         directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
         for row in range(self.ROWS):
             for col in range(self.COLS):
@@ -50,6 +50,37 @@ class Board:
                     if self._check_line(row, col, dr, dc, piece):
                         return True
         return False
+
+    def is_winner_at(self, row: int, col: int, piece: Piece) -> bool:
+        """Check if the piece at (row, col) completes a four-in-a-row.
+
+        Much faster than has_winner() — only checks lines through one cell
+        instead of scanning the entire board. Use after a drop when you know
+        which cell to check.
+        """
+        for dr, dc in [(0, 1), (1, 0), (1, 1), (1, -1)]:
+            count = 1
+            # Count in the positive direction
+            for sign in (1, -1):
+                for i in range(1, self.CONNECT):
+                    r = row + i * dr * sign
+                    c = col + i * dc * sign
+                    if r < 0 or r >= self.ROWS or c < 0 or c >= self.COLS:
+                        break
+                    if self._grid[r][c] != piece:
+                        break
+                    count += 1
+            if count >= self.CONNECT:
+                return True
+        return False
+
+    def undo(self, column: int) -> None:
+        """Remove the topmost piece from a column. Inverse of drop()."""
+        for row in range(self.ROWS - 1, -1, -1):
+            if self._grid[row][column] is not None:
+                self._grid[row][column] = None
+                return
+        raise ValueError(f"Column {column} is empty")
 
     def _check_line(self, row: int, col: int, dr: int, dc: int, piece: Piece) -> bool:
         for i in range(self.CONNECT):
