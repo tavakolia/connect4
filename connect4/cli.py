@@ -109,5 +109,7 @@ def main() -> None:
             renderer.show_draw()
             break
 
-        if not isinstance(red_player, InteractivePlayer) and not isinstance(yellow_player, InteractivePlayer):
+        if not isinstance(red_player, InteractivePlayer) and not isinstance(
+            yellow_player, InteractivePlayer
+        ):
             time.sleep(0.5)
