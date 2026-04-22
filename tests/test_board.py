@@ -163,6 +163,44 @@ class TestHasWinner:
         assert board.has_winner(Piece.YELLOW) is False
 
 
+class TestIsWinnerAt:
+    def test_horizontal_win_at(self, board):
+        for col in range(4):
+            board.drop(column=col, piece=Piece.RED)
+        assert board.is_winner_at(0, 3, Piece.RED) is True
+
+    def test_no_win_at(self, board):
+        board.drop(column=0, piece=Piece.RED)
+        assert board.is_winner_at(0, 0, Piece.RED) is False
+
+    def test_diagonal_win_at(self, board):
+        # Build NE diagonal
+        board.drop(0, Piece.RED)
+        board.drop(1, Piece.YELLOW); board.drop(1, Piece.RED)
+        board.drop(2, Piece.YELLOW); board.drop(2, Piece.YELLOW); board.drop(2, Piece.RED)
+        board.drop(3, Piece.YELLOW); board.drop(3, Piece.YELLOW); board.drop(3, Piece.YELLOW)
+        board.drop(3, Piece.RED)
+        assert board.is_winner_at(3, 3, Piece.RED) is True
+
+
+class TestUndo:
+    def test_undo_removes_top_piece(self, board):
+        board.drop(column=3, piece=Piece.RED)
+        board.drop(column=3, piece=Piece.YELLOW)
+        board.undo(column=3)
+        assert board._grid[1][3] is None
+        assert board._grid[0][3] == Piece.RED
+
+    def test_undo_empty_column_raises(self, board):
+        with pytest.raises(ValueError, match="empty"):
+            board.undo(column=0)
+
+    def test_drop_undo_roundtrip(self, board):
+        board.drop(column=3, piece=Piece.RED)
+        board.undo(column=3)
+        assert board._grid[0][3] is None
+
+
 class TestRepr:
     def test_repr_empty_board(self, board):
         s = repr(board)

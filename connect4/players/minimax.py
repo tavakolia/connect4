@@ -35,15 +35,18 @@ class MinimaxPlayer:
         for col in _COLUMN_ORDER:
             if not board.is_valid_column(col):
                 continue
-            child = board.copy()
-            child.drop(col, piece)
+            row = board.drop(col, piece)
 
-            if child.has_winner(piece):
+            if board.is_winner_at(row, col, piece):
+                board.undo(col)
                 analyses.append(MoveAnalysis(column=col, score=math.inf, max_depth=self.depth))
                 logger.debug("Column %d: immediate win", col)
                 return col
 
-            score = self._minimax(child, piece, self.depth - 1, -math.inf, math.inf, False)
+            score = self._minimax(
+                board, piece, self.depth - 1, -math.inf, math.inf, False
+            )
+            board.undo(col)
 
             analyses.append(MoveAnalysis(column=col, score=score, max_depth=self.depth))
             logger.debug("Column %d: score=%.2f", col, score)
@@ -63,25 +66,25 @@ class MinimaxPlayer:
         beta: float,
         maximizing: bool,
     ) -> float:
-        opponent = piece.opponent
-
-        if board.has_winner(piece):
-            return math.inf
-        if board.has_winner(opponent):
-            return -math.inf
+        # Terminal and depth checks (no drop yet — caller already dropped)
         if board.is_full():
             return 0
         if depth == 0:
             return self.evaluate(board, piece)
+
+        opponent = piece.opponent
 
         if maximizing:
             max_score = -math.inf
             for col in _COLUMN_ORDER:
                 if not board.is_valid_column(col):
                     continue
-                child = board.copy()
-                child.drop(col, piece)
-                score = self._minimax(child, piece, depth - 1, alpha, beta, False)
+                row = board.drop(col, piece)
+                if board.is_winner_at(row, col, piece):
+                    board.undo(col)
+                    return math.inf
+                score = self._minimax(board, piece, depth - 1, alpha, beta, False)
+                board.undo(col)
                 max_score = max(max_score, score)
                 alpha = max(alpha, score)
                 if alpha >= beta:
@@ -92,9 +95,12 @@ class MinimaxPlayer:
             for col in _COLUMN_ORDER:
                 if not board.is_valid_column(col):
                     continue
-                child = board.copy()
-                child.drop(col, opponent)
-                score = self._minimax(child, piece, depth - 1, alpha, beta, True)
+                row = board.drop(col, opponent)
+                if board.is_winner_at(row, col, opponent):
+                    board.undo(col)
+                    return -math.inf
+                score = self._minimax(board, piece, depth - 1, alpha, beta, True)
+                board.undo(col)
                 min_score = min(min_score, score)
                 beta = min(beta, score)
                 if alpha >= beta:
