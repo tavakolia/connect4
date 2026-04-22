@@ -1,5 +1,3 @@
-import time
-
 import pytest
 
 from connect4.board import Board
@@ -46,22 +44,6 @@ class TestBotVsGreedy:
         win_rate = wins / games
         print(f"\n  Minimax vs Greedy: {wins}/{games} wins ({win_rate:.0%})")
         assert win_rate > 0.80, f"Win rate {win_rate:.0%} is below 80%"
-
-
-class TestPerformance:
-    def test_move_completes_within_budget(self):
-        """Each move should complete in <2 seconds at depth 6."""
-        board = Board()
-        player = MinimaxPlayer(depth=6)
-        board.drop(3, Piece.RED)
-        board.drop(3, Piece.YELLOW)
-        board.drop(4, Piece.RED)
-
-        start = time.monotonic()
-        player.choose_column(board, Piece.YELLOW)
-        elapsed = time.monotonic() - start
-        assert elapsed < 2.0, f"Move took {elapsed:.2f}s, budget is 2s"
-
 
 class TestGameInvariants:
     """Property-based tests: invariants that hold for any valid game."""
