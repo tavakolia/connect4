@@ -1,14 +1,12 @@
 # Connect 4 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Build a Connect 4 Python module with a minimax bot that beats casual players, a terminal CLI, and comprehensive tests.
 
 **Architecture:** Three-layer design — core engine (Board + types), player layer (protocol + implementations), orchestration + UI (Game + CLI). TDD throughout: write failing test → implement → pass → commit.
 
 **Tech Stack:** Python 3.10+, pytest, standard library only.
 
-**Spec:** `docs/superpowers/specs/2026-04-12-connect4-design.md`
+**Spec:** `docs/design.md`
 
 ---
 

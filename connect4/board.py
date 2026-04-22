@@ -4,11 +4,18 @@ from connect4.types import Piece
 
 
 class Board:
+    """Mutable Connect 4 board using the standard 6x7 grid and connect-4 rule.
+
+    The game dimensions are fixed as class constants because this exercise is
+    specifically standard Connect 4, not a generalized connect-N engine.
+    """
+
     ROWS = 6
     COLS = 7
     CONNECT = 4
 
     def __init__(self) -> None:
+        """Initialize an empty board."""
         self._grid: list[list[Piece | None]] = [[None] * self.COLS for _ in range(self.ROWS)]
 
     def drop(self, column: int, piece: Piece) -> int:
@@ -26,15 +33,19 @@ class Board:
         return self._grid[row][col]
 
     def is_valid_column(self, column: int) -> bool:
+        """Return True if a piece can still be dropped into the column."""
         return 0 <= column < self.COLS and self._grid[self.ROWS - 1][column] is None
 
     def valid_columns(self) -> list[int]:
+        """Return all columns that currently accept another piece."""
         return [col for col in range(self.COLS) if self.is_valid_column(col)]
 
     def is_full(self) -> bool:
+        """Return True when no additional legal moves remain."""
         return all(self._grid[self.ROWS - 1][col] is not None for col in range(self.COLS))
 
     def copy(self) -> Board:
+        """Return a deep copy of the board state."""
         new_board = Board()
         new_board._grid = [row[:] for row in self._grid]
         return new_board
@@ -83,6 +94,7 @@ class Board:
         raise ValueError(f"Column {column} is empty")
 
     def _check_line(self, row: int, col: int, dr: int, dc: int, piece: Piece) -> bool:
+        """Return True if `piece` occupies a full connect-length line from a start cell."""
         for i in range(self.CONNECT):
             r = row + i * dr
             c = col + i * dc

@@ -14,21 +14,26 @@ _COLUMN_ORDER = [3, 2, 4, 1, 5, 0, 6]
 
 
 class MinimaxPlayer:
+    """Minimax search player with alpha-beta pruning and center-out move ordering."""
+
     def __init__(
         self,
         depth: int = 6,
         evaluate: Callable[[Board, Piece], float] | None = None,
     ) -> None:
+        """Create a minimax player with configurable depth and evaluation function."""
         self.depth = depth
         self.evaluate = evaluate or default_evaluate
 
     def choose_column(self, board: Board, piece: Piece) -> MoveResult:
+        """Search the position and return the best move plus per-column analysis."""
         analyses: list[MoveAnalysis] = []
         best_col = self._search(board, piece, analyses)
         logger.info("Chose column %d (analyses: %s)", best_col, analyses)
         return MoveResult(column=best_col, analysis=analyses)
 
     def _search(self, board: Board, piece: Piece, analyses: list[MoveAnalysis]) -> int:
+        """Evaluate root moves and pick the highest-scoring legal column."""
         best_score = -math.inf
         best_col = board.valid_columns()[0]
 
@@ -64,6 +69,7 @@ class MinimaxPlayer:
         beta: float,
         maximizing: bool,
     ) -> float:
+        """Recursively evaluate the position using alpha-beta pruning."""
         # Terminal and depth checks (no drop yet — caller already dropped)
         if board.is_full():
             return 0

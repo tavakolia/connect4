@@ -15,11 +15,14 @@ ANSI_RESET = "\033[0m"
 
 
 class Piece(enum.Enum):
+    """Player piece identifiers used throughout the game state."""
+
     RED = "R"
     YELLOW = "Y"
 
     @property
     def opponent(self) -> Piece:
+        """Return the opposing piece color."""
         return Piece.YELLOW if self == Piece.RED else Piece.RED
 
     @property
@@ -31,6 +34,8 @@ class Piece(enum.Enum):
 
 @dataclasses.dataclass(frozen=True)
 class MoveAnalysis:
+    """Score assigned to a candidate move during search."""
+
     column: int
     score: float
     max_depth: int
@@ -38,12 +43,16 @@ class MoveAnalysis:
 
 @dataclasses.dataclass(frozen=True)
 class MoveResult:
+    """Move chosen by a player, with optional search diagnostics."""
+
     column: int
     analysis: list[MoveAnalysis] | None = None
 
 
 @dataclasses.dataclass(frozen=True)
 class GameState:
+    """Immutable snapshot emitted after each move during game play."""
+
     board: Board
     piece: Piece
     column: int
