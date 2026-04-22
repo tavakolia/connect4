@@ -8,7 +8,6 @@ import re
 import subprocess
 import sys
 
-
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 
 
