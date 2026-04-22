@@ -1,3 +1,5 @@
+"""Player implementations and shared player protocols."""
+
 from connect4.players.base import Player
 from connect4.players.greedy import GreedyPlayer
 from connect4.players.human import HumanPlayer

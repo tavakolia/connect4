@@ -12,8 +12,19 @@ You play as RED (first move), the bot plays as YELLOW. Enter a column number (1-
 
 ### Options
 
-The CLI allows you to pit any combination of players against each other. Supported players include `human`, `minimax`, `greedy`, and `random`.
-Arguments (like search depth for `minimax`) are provided immediately following the player's name.
+The CLI accepts two positional player specs:
+
+```bash
+python -m connect4 [player red] [player yellow]
+```
+
+At the moment, each player can be one of:
+- `human`
+- `minimax [depth]`
+- `greedy`
+- `random`
+
+Arguments such as the search depth for `minimax` are provided immediately after the player name.
 
 ```bash
 python -m connect4 minimax 8 human   # let the bot go first (depth 8)
@@ -46,11 +57,22 @@ print(board.valid_columns())        # [0, 1, 2, 3, 4, 5, 6]
 
 ## Architecture
 
-```
-CLI (cli.py) → Game (game.py) → Players + Board (board.py) → Evaluation (evaluation.py)
+```mermaid
+flowchart LR
+    CLI[cli.py]
+    Game[game.py]
+    Players[players/*]
+    Board[board.py]
+    Evaluation[evaluation.py]
+
+    CLI --> Game
+    Game --> Players
+    Game --> Board
+    Players --> Board
+    Players --> Evaluation
 ```
 
-- **Board** — 6×7 grid, piece dropping with gravity, win detection in 4 directions
+- **Board** — fixed 6x7 grid with `Board.ROWS`, `Board.COLS`, and `Board.CONNECT` constants
 - **Game** — Generator-based orchestrator: `Game.play()` yields a `GameState` after each move
 - **Players** — All satisfy the `Player` protocol (structural typing, no inheritance required):
   - `MinimaxPlayer` — Alpha-beta pruning with configurable depth and injectable evaluation function
@@ -59,19 +81,24 @@ CLI (cli.py) → Game (game.py) → Players + Board (board.py) → Evaluation (e
   - `HumanPlayer` — Reads from stdin with input validation
 - **Evaluation** — Pure function scoring board positions via window analysis and center preference
 
+## Further Reading
+
+- [Design doc](docs/design.md)
+- [Implementation plan](docs/implementation-plan.md)
+
 ## Running Tests
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-339 tests covering:
+The test suite covers:
 - Board mechanics and win detection (all 4 directions, edge cases)
 - Minimax correctness (forced wins, forced blocks, immediate-win priority)
+- Known search positions that verify deeper tactical choices
 - Evaluation function (terminal states, center preference, window scoring)
 - Game flow (alternation, win/draw detection, generator semantics)
 - Bot strength (>95% vs random, >80% vs greedy over 100 games each)
-- Performance (depth-6 move < 2 seconds)
 - Game invariants (piece balance, no floating pieces, game length, single winner)
 
 ## Project Structure
@@ -108,4 +135,4 @@ tests/
 
 - Python >= 3.10
 - No third-party dependencies (standard library only)
-- pytest for running tests
+- `pytest` and `ruff` for local test/lint runs

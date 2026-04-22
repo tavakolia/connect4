@@ -7,19 +7,27 @@ from connect4.types import MoveResult, Piece
 
 
 class HumanUIDelegate(Protocol):
+    """UI callbacks required by the interactive human player."""
+
     def request_column(self, piece: Piece) -> str: ...
+
     def show_error_invalid_input(self, raw: str) -> None: ...
+
     def show_error_out_of_range(self, display_col: int) -> None: ...
+
     def show_error_column_full(self, display_col: int) -> None: ...
 
 
 class HumanPlayer:
+    """Interactive player that asks a UI delegate for validated moves."""
+
     is_interactive = True
 
     def __init__(self, ui_delegate: HumanUIDelegate) -> None:
         self._ui = ui_delegate
 
     def choose_column(self, board: Board, piece: Piece) -> MoveResult:
+        """Keep prompting until the user supplies a legal column."""
         while True:
             raw = self._ui.request_column(piece)
             try:

@@ -7,10 +7,14 @@ from connect4.types import MoveResult, Piece
 
 
 class GreedyPlayer:
+    """One-ply tactical player that prefers immediate wins and blocks."""
+
     def __init__(self, seed: int | None = None) -> None:
+        """Create a greedy player with optional deterministic tie-breaking."""
         self._rng = random.Random(seed)
 
     def choose_column(self, board: Board, piece: Piece) -> MoveResult:
+        """Choose a winning move, otherwise block, otherwise fall back to random."""
         opponent = piece.opponent
         valid = board.valid_columns()
 

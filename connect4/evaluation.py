@@ -38,6 +38,7 @@ def _is_contiguous(window: list[Piece | None], piece: Piece) -> bool:
 
 
 def _score_window(window: list[Piece | None], piece: Piece, opponent: Piece) -> float:
+    """Score a four-cell window from `piece`'s perspective."""
     own = window.count(piece)
     opp = window.count(opponent)
     empty = window.count(None)
@@ -54,6 +55,7 @@ def _score_window(window: list[Piece | None], piece: Piece, opponent: Piece) -> 
 
 
 def _score_all_windows(board: Board, piece: Piece, opponent: Piece) -> float:
+    """Aggregate heuristic scores over every horizontal, vertical, and diagonal window."""
     score = 0.0
     get = board.get
 

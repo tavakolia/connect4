@@ -14,6 +14,7 @@ from connect4.types import Piece
 
 
 def _load_player(tokens: list[str], renderer: TerminalRenderer):
+    """Parse one player spec from CLI tokens and instantiate the player class."""
     if not tokens:
         raise ValueError("Not enough players specified")
 
@@ -65,6 +66,7 @@ def _load_player(tokens: list[str], renderer: TerminalRenderer):
 
 
 def main() -> None:
+    """Run the terminal Connect 4 entry point."""
     parser = argparse.ArgumentParser(description="Play Connect 4")
     parser.add_argument(
         "players",

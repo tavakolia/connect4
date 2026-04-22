@@ -11,6 +11,7 @@ class Game:
     """Orchestrates a Connect 4 game between two players."""
 
     def __init__(self, red: Player, yellow: Player) -> None:
+        """Create a new game with fresh board state and fixed player assignments."""
         self.board = Board()
         self.players = {Piece.RED: red, Piece.YELLOW: yellow}
 
