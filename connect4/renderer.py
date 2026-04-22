@@ -14,7 +14,7 @@ from connect4.players.human import HumanUIDelegate
 class GameRenderer(HumanUIDelegate, Protocol):
     """UI contract for rendering game events and gathering human input."""
 
-    def show_welcome(self, you: Piece, bot: Piece) -> None: ...
+    def show_welcome(self) -> None: ...
 
     def show_board(self, board: Board) -> None: ...
 
@@ -57,8 +57,10 @@ class TerminalRenderer:
         lines.append("  " + "  ".join(str(i + 1) for i in range(board.COLS)) + "  ")
         return "\n".join(lines)
 
-    def show_welcome(self, you: Piece, bot: Piece) -> None:
-        print(f"Connect 4 — You are {you.colored_name}, bot is {bot.colored_name}")
+    def show_welcome(self) -> None:
+        red = Piece.RED.colored_name
+        yellow = Piece.YELLOW.colored_name
+        print(f"Connect 4 — {red} vs. {yellow}. {red} plays first.")
 
     def show_board(self, board: Board) -> None:
         print(self.format_board(board))

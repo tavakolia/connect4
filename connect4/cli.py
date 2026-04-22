@@ -10,7 +10,6 @@ import typing
 from connect4.game import Game
 from connect4.players.base import InteractivePlayer
 from connect4.renderer import TerminalRenderer
-from connect4.types import Piece
 
 
 def _load_player(tokens: list[str], renderer: TerminalRenderer):
@@ -92,12 +91,8 @@ def main() -> None:
 
     game = Game(red=red_player, yellow=yellow_player)
 
-    # For display purposes, assume Red is P1 and Yellow is P2
-    renderer.show_welcome(Piece.RED, Piece.YELLOW)
+    renderer.show_welcome()
     renderer.show_board(game.board)
-
-    # Note: TerminalRenderer.show_welcome mentions "You are RED".
-    # This might look slightly off in bot vs bot, but matches original behavior.
 
     import time
 

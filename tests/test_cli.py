@@ -82,5 +82,7 @@ def test_load_player_greedy_with_seed():
 
 
 def test_bot_players_are_not_interactive():
-    for cls in (RandomPlayer, GreedyPlayer, MinimaxPlayer):
-        assert not isinstance(cls, InteractivePlayer), f"{cls.__name__} should not be interactive"
+    for player in (RandomPlayer(), GreedyPlayer(), MinimaxPlayer()):
+        assert not isinstance(player, InteractivePlayer), (
+            f"{type(player).__name__} should not be interactive"
+        )
