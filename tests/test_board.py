@@ -176,9 +176,14 @@ class TestIsWinnerAt:
     def test_diagonal_win_at(self, board):
         # Build NE diagonal
         board.drop(0, Piece.RED)
-        board.drop(1, Piece.YELLOW); board.drop(1, Piece.RED)
-        board.drop(2, Piece.YELLOW); board.drop(2, Piece.YELLOW); board.drop(2, Piece.RED)
-        board.drop(3, Piece.YELLOW); board.drop(3, Piece.YELLOW); board.drop(3, Piece.YELLOW)
+        board.drop(1, Piece.YELLOW)
+        board.drop(1, Piece.RED)
+        board.drop(2, Piece.YELLOW)
+        board.drop(2, Piece.YELLOW)
+        board.drop(2, Piece.RED)
+        board.drop(3, Piece.YELLOW)
+        board.drop(3, Piece.YELLOW)
+        board.drop(3, Piece.YELLOW)
         board.drop(3, Piece.RED)
         assert board.is_winner_at(3, 3, Piece.RED) is True
 

@@ -55,18 +55,20 @@ class TestWinInOne:
 
     def test_diagonal_win(self):
         # Build a diagonal ↗ with RED at (0,0),(1,1),(2,2), needs (3,3)
-        board = _build_board([
-            0,  # R at (0,0)
-            1,  # Y at (0,1)
-            1,  # R at (1,1)
-            2,  # Y at (0,2)
-            2,  # R at (1,2)
-            3,  # Y at (0,3)
-            2,  # R at (2,2)
-            3,  # Y at (1,3)
-            3,  # R at (2,3)
-            6,  # Y at (0,6)
-        ])
+        board = _build_board(
+            [
+                0,  # R at (0,0)
+                1,  # Y at (0,1)
+                1,  # R at (1,1)
+                2,  # Y at (0,2)
+                2,  # R at (1,2)
+                3,  # Y at (0,3)
+                2,  # R at (2,2)
+                3,  # Y at (1,3)
+                3,  # R at (2,3)
+                6,  # Y at (0,6)
+            ]
+        )
         # RED needs to play col 3 to get (3,3) for the diagonal win
         player = MinimaxPlayer(depth=1)
         result = player.choose_column(board, Piece.RED)
