@@ -14,7 +14,7 @@ dev = [
 ]
 
 [project.scripts]
-connect4 = "connect4.__main__:main"
+connect4 = "connect4.cli:main"
 
 [build-system]
 requires = ["hatchling"]
