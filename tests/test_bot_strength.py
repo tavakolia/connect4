@@ -45,6 +45,7 @@ class TestBotVsGreedy:
         print(f"\n  Minimax vs Greedy: {wins}/{games} wins ({win_rate:.0%})")
         assert win_rate > 0.80, f"Win rate {win_rate:.0%} is below 80%"
 
+
 class TestGameInvariants:
     """Property-based tests: invariants that hold for any valid game."""
 
