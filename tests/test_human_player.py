@@ -66,4 +66,5 @@ class TestHumanPlayer:
         assert result.analysis is None
 
     def test_is_interactive(self):
-        assert isinstance(HumanPlayer, InteractivePlayer)
+        player = HumanPlayer(ui_delegate=FakeUI([]))
+        assert isinstance(player, InteractivePlayer)

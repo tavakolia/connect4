@@ -64,10 +64,11 @@ class TestShowMethods:
         return buf.getvalue()
 
     def test_show_welcome(self, renderer):
-        output = self._capture(lambda: renderer.show_welcome(Piece.RED, Piece.YELLOW))
+        output = self._capture(lambda: renderer.show_welcome())
         assert "Connect 4" in output
         assert "RED" in output
         assert "YELLOW" in output
+        assert "plays first" in output
 
     def test_show_board(self, renderer, board):
         output = self._capture(lambda: renderer.show_board(board))

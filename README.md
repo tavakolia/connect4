@@ -84,7 +84,6 @@ flowchart LR
 ## Further Reading
 
 - [Design doc](docs/design.md)
-- [Implementation plan](docs/implementation-plan.md)
 
 ## Running Tests
 
